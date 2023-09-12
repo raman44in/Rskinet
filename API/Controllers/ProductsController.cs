@@ -9,12 +9,11 @@ using API.DTOs;
 using System.Security.Cryptography.Xml;
 using System.Linq;
 using AutoMapper;
+using API.Errors;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+    public class ProductsController : BaseApiController
     {
         private readonly IProductRepository _repo;
 
@@ -41,11 +40,16 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse),StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
            var spec=new ProductWithTpesAndBrandSpecification(id);
-            var products= await _productRepo.GetEntityWithSpec(spec);
-            return Ok(_mapper.Map<Product,ProductToReturnDto>(products));
+            var product= await _productRepo.GetEntityWithSpec(spec);
+            if(product==null){
+               return NotFound(new ApiResponse(404));
+            }
+            return Ok(_mapper.Map<Product,ProductToReturnDto>(product));
         }
 
           [HttpGet("brands")]
