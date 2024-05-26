@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Pagination } from '../shared/models/pagination';
-import { Product } from '../shared/models/product.ts';
+import { Product } from '../shared/models/product';
 import { Brand } from '../shared/models/brand';
 import { Type } from '../shared/models/type';
 import { ShopParams } from '../shared/models/shopParams';
@@ -32,5 +32,9 @@ baseUrl='https://localhost:5001/api/'
 
   getTypes() {
     return this.http.get<Type[]>(this.baseUrl + 'products/types');
+  }
+
+  getProduct(id: number) {
+    return this.http.get<Product>(this.baseUrl + 'products/' + id);
   }
 }
